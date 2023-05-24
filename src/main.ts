@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Request } from 'express';
 import { ValidationPipe } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 
 async function bootstrap() {
@@ -16,4 +16,3 @@ async function bootstrap() {
   await app.listen(3005);
 }
 bootstrap();
-  
