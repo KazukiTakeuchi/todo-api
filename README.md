@@ -22,52 +22,190 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## システム構成
 
-## Installation
+- **Frontend**
+    - Next.js v13.4.4. (React v18.2)
+        - UI: Mantine
+        - React Query
+- **Backend**:
+    - NestJS v9.5.0 (Node.js v12~)
+        - ORM: Prisma
+- **Database**: PostgreSQL
+- **Type Checking**: TypeScript
 
-```bash
-$ yarn install
-```
+<br><br>
+# Backend
 
-## Running the app
+## **User Endpoints**
 
-```bash
-# development
-$ yarn run start
+このサービスは、ユーザー情報の更新を行うためのAPIエンドポイントを提供します。認証はJWTを使用し、パスワード情報はレスポンスから除外されます。
 
-# watch mode
-$ yarn run start:dev
+### **・GET /user**
 
-# production mode
-$ yarn run start:prod
-```
+認証されたユーザーの情報を取得します。ユーザーのパスワードはレスポンスから除外されます。
 
-## Test
+**Request**
 
-```bash
-# unit tests
-$ yarn run test
+- Headers: **`Authorization: Bearer <token>`**
 
-# e2e tests
-$ yarn run test:e2e
+**Response**
 
-# test coverage
-$ yarn run test:cov
-```
+- 200 OK: ユーザー情報（パスワード除く）
 
-## Support
+<br>
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### **・PATCH /user**
 
-## Stay in touch
+認証されたユーザーの情報を更新します。ユーザーのパスワードはレスポンスから除外されます。
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Request**
 
-## License
+- Headers: **`Authorization: Bearer <token>`**
+- Body: ユーザー情報のニックネームの更新データ
 
-Nest is [MIT licensed](LICENSE).
+**Response**
+
+- 200 OK: 更新後のユーザー情報（パスワード除く）
+
+<br><br><hr>
+
+## **Authentication Endpoints**
+
+このサービスは、ユーザー認証（サインアップ、ログイン、ログアウト）を行うためのAPIエンドポイントを提供します。認証はJWTを使用し、パスワード情報はレスポンスから除外されます。
+
+### **・GET /auth/csrf**
+
+CSRFトークンを取得します。
+
+**Request**
+
+- No parameters required
+
+**Response**
+
+- 200 OK: CSRFトークン
+
+<br>
+
+### **・POST /auth/signup**
+
+新規ユーザーを登録します。パスワードはbcryptでハッシュ化されます。
+
+**Request**
+
+- Body: ユーザー情報（メールアドレスとパスワード）
+
+**Response**
+
+- 200 OK: メッセージ（登録成功）
+
+<br>
+
+### **・POST /auth/login**
+
+ユーザーを認証し、JWTを発行します。JWTはHTTP Onlyのクッキーとしてクライアントに送信されます。
+
+**Request**
+
+- Body: ユーザー情報（メールアドレスとパスワード）
+
+**Response**
+
+- 200 OK: メッセージ（認証成功）、JWTを含むクッキー
+
+<br>
+
+### **・POST /auth/logout**
+
+ユーザーのログアウトを行います。クッキーのJWTをクリアします。
+
+**Request**
+
+- Headers: **`Authorization: Bearer <token>`**
+
+**Response**
+
+- 200 OK: メッセージ（ログアウト成功）
+
+<br><br><hr>
+
+## **Todo Endpoint**
+
+このサービスは、認証されたユーザーのTodoタスクの作成、取得、更新、削除を行うためのAPIエンドポイントを提供します。
+
+### **・GET /todo**
+
+認証されたユーザーの全てのタスクを取得します。
+
+**Request**
+
+- Headers: **`Authorization: Bearer <token>`**
+
+**Response**
+
+- 200 OK: ユーザーの全てのタスク
+
+<br>
+
+### **・GET /todo/:id**
+
+認証されたユーザーの特定のタスクを取得します。
+
+**Request**
+
+- Headers: **`Authorization: Bearer <token>`**
+- Path Parameters: **`id`** (タスクのID)
+
+**Response**
+
+- 200 OK: 指定されたIDのタスク
+
+<br>
+
+### **・POST /todo**
+
+新しいタスクを作成します。
+
+**Request**
+
+- Headers: **`Authorization: Bearer <token>`**
+- Body: タスク情報
+
+**Response**
+
+- 200 OK: 作成されたタスク
+
+<br>
+
+### **・PATCH /todo/:id**
+
+特定のタスクを更新します。
+
+**Request**
+
+- Headers: **`Authorization: Bearer <token>`**
+- Path Parameters: **`id`** (タスクのID)
+- Body: タスク情報の更新データ
+
+**Response**
+
+- 200 OK: 更新後のタスク
+
+<br>
+
+### **・DELETE /todo/:id**
+
+特定のタスクを削除します。
+
+**Request**
+
+- Headers: **`Authorization: Bearer <token>`**
+- Path Parameters: **`id`** (タスクのID)
+
+**Response**
+
+- 204 No Content: タスクの削除成功
+
+<br><br><hr>
